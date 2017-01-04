@@ -14,64 +14,62 @@ class ViewController: UIViewController {
     @IBOutlet weak var cancelButton: UIButton!
     @IBOutlet weak var setButton: UIButton!
     @IBOutlet weak var timePicker: UIDatePicker!
+    @IBOutlet weak var backView: UIView!
     
     var dateFormatter = DateFormatter()
-    
-    //setup before the view appears
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        
-        
-    }
+    var offset:CGFloat = 0.0
+    var count = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        contentView.center.y += self.view.frame.height/2
-        // Do any additional setup after loading the view, typically from a nib.
-        //contentView.isHidden = true
+        offset = contentView.bounds.height
+        
         timePicker.datePickerMode = .time
-        
-        
         dateFormatter.dateStyle = .short
-        dateFormatter.dateFormat = "HH:mm:ss"
+        dateFormatter.dateFormat = "HH:mm:SS"
         
-        
-        //self.view.addSubview(contentView)
+        backView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapBackView)))
         
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    func tapBackView() {
+        
+        UIView.animate(withDuration: 0.5, delay: 0.0, options: .curveEaseOut, animations: {
+            self.backView.backgroundColor = UIColor(white: 0.2, alpha: 0.0)
+            
+            if (self.count == 0) {
+                self.contentView.center.y += self.offset
+            }
+            
+        }, completion: { (finished) in
+            self.count += 1
+        })
     }
 
     @IBAction func setTimeButtonPressed(_ sender: UIButton) {
         
-        //contentView.isHidden = false
-        UIView.animate(withDuration: 0.7) {
-            self.contentView.center.y -= self.view.frame.height/2
-        }
-        
-        
-        //contentView.isHidden = false
+        UIView.animate(withDuration: 0.5, delay: 0.0, options: .curveEaseOut, animations: {
+            self.backView.backgroundColor = UIColor(white: 0.2, alpha: 0.5)
+            self.contentView.center.y -= self.offset
+        }, completion: { (finished) in
+            self.count = 0
+        })
     }
     
     @IBAction func cancelButtonPressed(_ sender: UIButton) {
         
-        UIView.animate(withDuration: 0.7) {
-            self.contentView.center.y += self.view.frame.height/2
-        }
-        
-        
-        //contentView.isHidden = true
-        print("CancelButton")
+        UIView.animate(withDuration: 0.5, delay: 0.0, options: .curveEaseOut, animations: {
+            self.backView.backgroundColor = UIColor(white: 0.2, alpha: 0.0)
+            self.contentView.center.y += self.offset
+            
+        }, completion: { (finished) in
+            self.count += 1
+        })
     }
     
     @IBAction func timeChanged(_ sender: UIDatePicker) {
         let time = dateFormatter.string(from: timePicker.date)
-        
         print(time)
     }
 
